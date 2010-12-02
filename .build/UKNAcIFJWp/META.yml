@@ -1,0 +1,21 @@
+---
+abstract: 'Simple localization for web apps.'
+author:
+  - 'Ido Perlmuter <ido@ido50.net>'
+build_requires:
+  Test::More: 0
+  utf8: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.31
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.102343, CPAN::Meta::Converter version 2.102160'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Wolowitz
+requires:
+  Carp: 0
+  JSON::Any: 0
+  perl: 5.008
+version: 0.1
