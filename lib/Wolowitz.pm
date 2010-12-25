@@ -38,7 +38,7 @@ Wolowitz - Dead simple localization for web apps with JSON.
 
 	print $w->loc('Welcome!', 'es'); # prints 'Bienvenido!'
 
-	print $w->loc("I'm using %1", 'he', $w->loc("Linux")); # prints "אני משתמש בלינוקס"
+	print $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he')); # prints "אני משתמש בלינוקס"
 
 =head1 DESCRIPTION
 
