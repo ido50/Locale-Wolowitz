@@ -1,6 +1,8 @@
-Revision history for Wolowitz
+Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- Changed distribution name to Locale::Wolowitz
+	- Fixed some documentation errors
 
 0.1       2010-12-25 22:28:01 Asia/Jerusalem
 	- Initial release

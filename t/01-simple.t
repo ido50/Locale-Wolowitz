@@ -3,10 +3,10 @@
 use strict;
 use warnings;
 use Test::More tests => 15;
-use Wolowitz;
+use Locale::Wolowitz;
 use utf8;
 
-my $w = Wolowitz->new('t/i18n');
+my $w = Locale::Wolowitz->new('t/i18n');
 ok($w, 'Got a proper Wolowitz object');
 
 is($w->loc('hey man', 'en'), 'hey man', 'en -> en [1]');

@@ -1,4 +1,4 @@
-package Wolowitz;
+package Locale::Wolowitz;
 
 # ABSTRACT: Dead simple localization for web apps with JSON.
 
@@ -12,7 +12,7 @@ use Carp;
 
 =head1 NAME
 
-Wolowitz - Dead simple localization for web apps with JSON.
+Locale::Wolowitz - Dead simple localization for web apps with JSON.
 
 =head1 SYNOPSIS
 
@@ -32,9 +32,9 @@ Wolowitz - Dead simple localization for web apps with JSON.
 	}
 
 	# in your app
-	use Wolowitz;
+	use Locale::Wolowitz;
 
-	my $w = Wolowitz->new( './i18n' );
+	my $w = Locale::Wolowitz->new( './i18n' );
 
 	print $w->loc('Welcome!', 'es'); # prints 'Bienvenido!'
 
@@ -42,7 +42,7 @@ Wolowitz - Dead simple localization for web apps with JSON.
 
 =head1 DESCRIPTION
 
-Wolowitz is a very simple text localization system, meant to be used by
+Locale::Wolowitz is a very simple text localization system, meant to be used by
 web applications (but can pretty much be used anywhere). Yes, another
 localization system.
 
@@ -55,11 +55,11 @@ website backed by one of my web apps) to view my app/website in the language
 of their choice. Also, I grew to hate the standard .po files, and thought
 using a JSON format might be more comfortable. And so Wolowitz was born.
 
-Wolowitz allows you to provide different languages to end-users of your
+Locale::Wolowitz allows you to provide different languages to end-users of your
 applications. To some extent, this means you can perform language negotiation
 with visitors (see L<Content negotiation on Wikipedia|https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Content_negotiation&oldid=367120431>).
 
-Wolowitz works with JSON files. Each file can serve one or more languages.
+Locale::Wolowitz works with JSON files. Each file can serve one or more languages.
 When creating an instance of this module, you are required to pass a path
 to a directory where your application's JSON localization files are present.
 These are all loaded and merged into one big hash-ref, which is stored in
@@ -88,6 +88,8 @@ The Spanish and Dutch file can look like this:
 		"Linux": {}
 	}
 
+While the Hebrew file can look like this:
+
 	# he.json
 	{
 		"Welcome!": "ברוכים הבאים!",
@@ -95,7 +97,7 @@ The Spanish and Dutch file can look like this:
 		"Linux": "לינוקס"
 	}
 
-When loading these files, Wolowitz internally merges the two files into
+When loading these files, Locale::Wolowitz internally merges the two files into
 one structure:
 
 	{
@@ -121,7 +123,7 @@ language, or has no reference in the JSON files at all, the string is
 simply returned as is.
 
 Say you write your application in English (and thus 'en' is your base
-language). Since Wolowitz doesn't really know what your base language is,
+language). Since Locale::Wolowitz doesn't really know what your base language is,
 you can translate texts within the same language. This is more useful when
 you want to give some of your strings an identifier. For example:
 
@@ -131,7 +133,7 @@ you want to give some of your strings an identifier. For example:
 	}
 
 As you've probably already noticed, Wolowitz supports placeholders.
-In Wolowitz, placeholders are written with a percent sign, followed by
+In Locale::Wolowitz, placeholders are written with a percent sign, followed by
 an integer, starting from 1 (e.g. %1, %2, %3). These are replaced by
 whatever you're passing to the C<loc()> method (but make sure you're
 passing scalars, or printable objects, otherwise you'll encounter errors).
@@ -248,15 +250,15 @@ Ido Perlmuter, C<< <ido at ido50.net> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-wolowitz at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Wolowitz>. I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-locale-wolowitz at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Locale-Wolowitz>. I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
-	perldoc Wolowitz
+	perldoc Locale::Wolowitz
 
 You can also look for information at:
 
@@ -264,19 +266,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Wolowitz>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Locale-Wolowitz>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Wolowitz>
+L<http://annocpan.org/dist/Locale-Wolowitz>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Wolowitz>
+L<http://cpanratings.perl.org/d/Locale-Wolowitz>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Wolowitz/>
+L<http://search.cpan.org/dist/Locale-Wolowitz/>
 
 =back
 

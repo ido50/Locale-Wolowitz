@@ -12,4 +12,4 @@
 ^\.lwpcookies$
 ^cover_db$
 ^pod2htm.*\.tmp$
-^Wolowitz-.*$
+^Locale-Wolowitz-.*$
