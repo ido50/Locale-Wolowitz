@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+0.2       2010-12-26 16:03:29 Asia/Jerusalem
 	- Changed distribution name to Locale::Wolowitz
 	- Fixed some documentation errors
 
