@@ -1,5 +1,5 @@
 NAME
-    Wolowitz - Dead simple localization for web apps with JSON.
+    Locale::Wolowitz - Dead simple localization for web apps with JSON.
 
 SYNOPSIS
             # in ./i18n/locales.coll.json
@@ -18,18 +18,18 @@ SYNOPSIS
             }
 
             # in your app
-            use Wolowitz;
+            use Locale::Wolowitz;
 
-            my $w = Wolowitz->new( './i18n' );
+            my $w = Locale::Wolowitz->new( './i18n' );
 
             print $w->loc('Welcome!', 'es'); # prints 'Bienvenido!'
 
-            print $w->loc("I'm using %1", 'he', $w->loc("Linux")); # prints "אני משתמש בלינוקס"
+            print $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he')); # prints "אני משתמש בלינוקס"
 
 DESCRIPTION
-    Wolowitz is a very simple text localization system, meant to be used by
-    web applications (but can pretty much be used anywhere). Yes, another
-    localization system.
+    Locale::Wolowitz is a very simple text localization system, meant to be
+    used by web applications (but can pretty much be used anywhere). Yes,
+    another localization system.
 
     Frankly, I never realized how to use the standard Perl localization
     systems such as Locale::Maketext, Gettext, Data::Localize or whatever.
@@ -41,13 +41,13 @@ DESCRIPTION
     and thought using a JSON format might be more comfortable. And so
     Wolowitz was born.
 
-    Wolowitz allows you to provide different languages to end-users of your
-    applications. To some extent, this means you can perform language
-    negotiation with visitors (see Content negotiation on Wikipedia
+    Locale::Wolowitz allows you to provide different languages to end-users
+    of your applications. To some extent, this means you can perform
+    language negotiation with visitors (see Content negotiation on Wikipedia
     <https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Content_neg
     otiation&oldid=367120431>).
 
-    Wolowitz works with JSON files. Each file can serve one or more
+    Locale::Wolowitz works with JSON files. Each file can serve one or more
     languages. When creating an instance of this module, you are required to
     pass a path to a directory where your application's JSON localization
     files are present. These are all loaded and merged into one big
@@ -77,6 +77,8 @@ DESCRIPTION
                     "Linux": {}
             }
 
+    While the Hebrew file can look like this:
+
             # he.json
             {
                     "Welcome!": "ברוכים הבאים!",
@@ -84,8 +86,8 @@ DESCRIPTION
                     "Linux": "לינוקס"
             }
 
-    When loading these files, Wolowitz internally merges the two files into
-    one structure:
+    When loading these files, Locale::Wolowitz internally merges the two
+    files into one structure:
 
             {
                     "Welcome!" => {
@@ -110,10 +112,10 @@ DESCRIPTION
     files at all, the string is simply returned as is.
 
     Say you write your application in English (and thus 'en' is your base
-    language). Since Wolowitz doesn't really know what your base language
-    is, you can translate texts within the same language. This is more
-    useful when you want to give some of your strings an identifier. For
-    example:
+    language). Since Locale::Wolowitz doesn't really know what your base
+    language is, you can translate texts within the same language. This is
+    more useful when you want to give some of your strings an identifier.
+    For example:
 
             "copyrights": {
                     "en": "Copyrights, 2010 Ido Perlmuter",
@@ -121,8 +123,8 @@ DESCRIPTION
             }
 
     As you've probably already noticed, Wolowitz supports placeholders. In
-    Wolowitz, placeholders are written with a percent sign, followed by an
-    integer, starting from 1 (e.g. %1, %2, %3). These are replaced by
+    Locale::Wolowitz, placeholders are written with a percent sign, followed
+    by an integer, starting from 1 (e.g. %1, %2, %3). These are replaced by
     whatever you're passing to the "loc()" method (but make sure you're
     passing scalars, or printable objects, otherwise you'll encounter
     errors).
@@ -148,34 +150,34 @@ AUTHOR
     Ido Perlmuter, "<ido at ido50.net>"
 
 BUGS
-    Please report any bugs or feature requests to "bug-wolowitz at
+    Please report any bugs or feature requests to "bug-locale-wolowitz at
     rt.cpan.org", or through the web interface at
-    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Wolowitz>. I will be
-    notified, and then you'll automatically be notified of progress on your
-    bug as I make changes.
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Locale-Wolowitz>. I will
+    be notified, and then you'll automatically be notified of progress on
+    your bug as I make changes.
 
 SUPPORT
     You can find documentation for this module with the perldoc command.
 
-            perldoc Wolowitz
+            perldoc Locale::Wolowitz
 
     You can also look for information at:
 
     *   RT: CPAN's request tracker
 
-        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Wolowitz>
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Locale-Wolowitz>
 
     *   AnnoCPAN: Annotated CPAN documentation
 
-        <http://annocpan.org/dist/Wolowitz>
+        <http://annocpan.org/dist/Locale-Wolowitz>
 
     *   CPAN Ratings
 
-        <http://cpanratings.perl.org/d/Wolowitz>
+        <http://cpanratings.perl.org/d/Locale-Wolowitz>
 
     *   Search CPAN
 
-        <http://search.cpan.org/dist/Wolowitz/>
+        <http://search.cpan.org/dist/Locale-Wolowitz/>
 
 LICENSE AND COPYRIGHT
     Copyright 2010 Ido Perlmuter.
