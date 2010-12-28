@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- Added versions to prereqs
+	- Added JSON recommendations to prereqs as JSON::Any doesn't require any JSON module
 
 0.2       2010-12-26 16:03:29 Asia/Jerusalem
 	- Changed distribution name to Locale::Wolowitz
