@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+0.3       2012-11-22 21:08:09 Asia/Jerusalem
 	- Added the ability to load just on localization file
 	- Added versions to prereqs
 	- Added JSON recommendations to prereqs as JSON::Any doesn't require any JSON module
