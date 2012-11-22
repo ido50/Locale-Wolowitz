@@ -1,18 +1,22 @@
 package Locale::Wolowitz;
 
-# ABSTRACT: Dead simple localization for web apps with JSON.
+# ABSTRACT: Dead simple localization for with JSON.
 
 use warnings;
 use strict;
-use JSON::Any;
 use utf8;
+
 use Carp;
+use JSON::Any;
+
+our $VERSION = "0.3";
+$VERSION = eval $VERSION;
 
 =encoding utf-8
 
 =head1 NAME
 
-Locale::Wolowitz - Dead simple localization for web apps with JSON.
+Locale::Wolowitz - Dead simple localization for with JSON.
 
 =head1 SYNOPSIS
 
@@ -42,31 +46,33 @@ Locale::Wolowitz - Dead simple localization for web apps with JSON.
 
 =head1 DESCRIPTION
 
-Locale::Wolowitz is a very simple text localization system, meant to be used by
-web applications (but can pretty much be used anywhere). Yes, another
+Locale::Wolowitz is a very simple text localization system. Yes, another
 localization system.
 
 Frankly, I never realized how to use the standard Perl localization systems
 such as L<Locale::Maketext>, L<Gettext>, L<Data::Localize> or whatever.
 It seems they are more meant to localize an application to the language
-of the system on which its running, which isn't really what I need. I want
-to allow users of my web applications (to put it simply, visitors of a
-website backed by one of my web apps) to view my app/website in the language
-of their choice. Also, I grew to hate the standard .po files, and thought
-using a JSON format might be more comfortable. And so Wolowitz was born.
+of the system on which its running, which isn't really what I need. Most of the
+time, seeing as how I'm mostly writing web applications, I wish to localize
+my applications/websites according to the user's wishes, not by the system.
+For example, I may create a content management system where the user can
+select the interface's language. Also, I grew to hate the standard .po
+files, and thought using a JSON format might be more comfortable.
 
 Locale::Wolowitz allows you to provide different languages to end-users of your
-applications. To some extent, this means you can perform language negotiation
-with visitors (see L<Content negotiation on Wikipedia|https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Content_negotiation&oldid=367120431>).
+applications. To some extent, when writing RESTful web applications, this means
+you can perform language negotiation with visitors (see
+L<Content negotiation on Wikipedia|https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Content_negotiation&oldid=367120431>).
 
 Locale::Wolowitz works with JSON files. Each file can serve one or more languages.
 When creating an instance of this module, you are required to pass a path
 to a directory where your application's JSON localization files are present.
-These are all loaded and merged into one big hash-ref, which is stored in
-memory. A file with only one language has to be named <lang>.json (where
-<lang> is the name of the language, you'd probably want to use the two-letter
-ISO 639-1 code). A file with multiple languages must end with .coll.json
-(this requirement will probably be lifted in the future).
+These are all loaded and merged into one big hash-ref (unless you tell the module
+to only load a specific file), which is stored in memory. A file with only one
+language has to be named <lang>.json (where <lang> is the name of the language,
+you'd probably want to use the two-letter ISO 639-1 code). A file with multiple
+languages must end with .coll.json (this requirement will probably be lifted in
+the future).
 
 The basic idea is to write your application in a base language, and use
 the JSON files to translate text to other languages. For example, lets say
@@ -85,7 +91,7 @@ The Spanish and Dutch file can look like this:
 			"es": "Estoy usando %1",
 			"nl": "Ik gebruik %1"
 		},
-		"Linux": {}
+		"Linux": {} // this line can also be missing entirely
 	}
 
 While the Hebrew file can look like this:
@@ -116,11 +122,18 @@ one structure:
 		}
 	}
 
-We can see here that Spanish and Dutch have no translation for "Linux".
+Notice the "%1" substrings above. This is a placeholder, just like in other
+localization paradigms - they are replaced with content you provide, usually
+dynamic content. In Locale::Wolowitz, placeholders are written with a percent
+sign, followed by an integer, starting from 1 (e.g. %1, %2, %3). When passing
+data for the placeholders, make sure you're passing scalars, or printable
+objects, otherwise you'll encounter errors.
+
+We can also see here that Spanish and Dutch have no translation for "Linux".
 Since Linux is written "Linux" in these languages, they have no translation.
 When attempting to translate a string that has no translation to the requested
 language, or has no reference in the JSON files at all, the string is
-simply returned as is.
+simply returned as is (but placeholders will still be replaced as expected).
 
 Say you write your application in English (and thus 'en' is your base
 language). Since Locale::Wolowitz doesn't really know what your base language is,
@@ -132,18 +145,15 @@ you want to give some of your strings an identifier. For example:
 		"he": "כל הזכויות שמורות, 2010 עידו פרלמוטר"
 	}
 
-As you've probably already noticed, Wolowitz supports placeholders.
-In Locale::Wolowitz, placeholders are written with a percent sign, followed by
-an integer, starting from 1 (e.g. %1, %2, %3). These are replaced by
-whatever you're passing to the C<loc()> method (but make sure you're
-passing scalars, or printable objects, otherwise you'll encounter errors).
-
 =head1 CLASS METHODS
 
-=head2 new( $path )
+=head2 new( $path / $filename )
 
 Creates a new instance of this module. Requires a path to a directory in
-which JSON localization files exist. They will be automatically loaded.
+which JSON localization files exist, or a path to a specific localization
+file. If you pass a directory, all JSON localization files will be loaded
+and merged as described above. If you pass one file, only that file will be
+loaded.
 
 =cut
 
@@ -198,18 +208,25 @@ sub _load_locales {
 	croak "You must provide a path to localization directory."
 		unless $path;
 
-	croak "Localization directory does not exist or is not a directory."
-		unless -d $path;
+	my @files;
 
-	# open the locales directory
-	opendir(PATH, $path)
-		|| croak "Can't open localization directory: $!";
+	if (-d $path) {
+		# open the locales directory
+		opendir(PATH, $path)
+			|| croak "Can't open localization directory: $!";
 	
-	# get all JSON files
-	my @files = grep {/\.json$/} readdir PATH;
+		# get all JSON files
+		@files = grep {/\.json$/} readdir PATH;
 
-	closedir PATH
-		|| carp "Can't close localization directory: $!";
+		closedir PATH
+			|| carp "Can't close localization directory: $!";
+	} elsif (-e $path) {
+		my ($file) = ($path =~ m{/([^/]+)$})[0];
+		$path = $`;
+		@files = ($file);
+	} else {
+		croak "Path must be to a directory or a JSON file.";
+	}
 
 	my $locales = {};
 
@@ -244,54 +261,109 @@ sub _load_locales {
 	return $locales;
 }
 
-=head1 AUTHOR
+=head1 DIAGNOSTICS
 
-Ido Perlmuter, C<< <ido at ido50.net> >>
+The following exceptions are thrown by this module:
 
-=head1 BUGS
+=over
 
-Please report any bugs or feature requests to C<bug-locale-wolowitz at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Locale-Wolowitz>. I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+=item C<< "You must provide a path to localization directory." >>
 
-=head1 SUPPORT
+This exception is thrown if you haven't provided the C<new()> subroutine
+a path to a localization file, or a directory of localization files. Read
+the documentation for the C<new()> subroutine above.
 
-You can find documentation for this module with the perldoc command.
+=item C<< "Can't open localization directory: %s" and "Can't close localization directory: %s" >>
 
-	perldoc Locale::Wolowitz
+This exception is thrown if Locale::Wolowitz failed to open/close the directory
+of the localization files. This will probably happen due to permission
+problems. The error message should include the actual reason for the failure.
 
-You can also look for information at:
+=item C<< "Path must be to a directory or a JSON file." >>
 
-=over 4
+This exception is thrown if you passed a wrong value to the C<new()> subroutine
+as the path to the localization directory/file. Either the path is wrong and thus
+does not exist, or the path does exist, but is not a directory and not a file.
 
-=item * RT: CPAN's request tracker
+=item C<< "Can't open localization file %s: %s" and "Can't close localization file %s: %s" >>
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Locale-Wolowitz>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Locale-Wolowitz>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Locale-Wolowitz>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Locale-Wolowitz/>
+This exception is thrown if Locale::Wolowitz fails to open/close a specific localization
+file. This will usually happen because of permission problems. The error message
+will include both the name of the file, and the actual reason for the failure.
 
 =back
 
+=head1 CONFIGURATION AND ENVIRONMENT
+  
+C<Locale::Wolowitz> requires no configuration files or environment variables.
+
+=head1 DEPENDENCIES
+
+C<Locale::Wolowitz> B<depends> on the following CPAN modules:
+
+=over
+
+=item * L<Carp>
+
+=item * L<JSON::Any>
+
+=back
+
+C<Locale::Wolowitz> recommends L<JSON> and/or L<JSON::XS>
+for actually being able to parse the JSON files.
+
+=head1 INCOMPATIBILITIES WITH OTHER MODULES
+
+None reported.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests to
+C<bug-Locale-Wolowitz@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Locale-Wolowitz>.
+
+=head1 AUTHOR
+
+Ido Perlmuter <ido@ido50.net>
+
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010 Ido Perlmuter.
+Copyright (c) 2010-2012, Ido Perlmuter C<< ido@ido50.net >>.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself, either version
+5.8.1 or any later version. See L<perlartistic|perlartistic> 
+and L<perlgpl|perlgpl>.
 
-See http://dev.perl.org/licenses/ for more information.
+The full text of the license can be found in the
+LICENSE file included with this module.
+
+=head1 DISCLAIMER OF WARRANTY
+
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
+LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
 
 =cut
 
 1;
+__END__

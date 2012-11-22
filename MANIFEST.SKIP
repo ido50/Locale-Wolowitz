@@ -13,3 +13,5 @@
 ^cover_db$
 ^pod2htm.*\.tmp$
 ^Locale-Wolowitz-.*$
+^MYMETA\.yml$
+^MYMETA\.json$
