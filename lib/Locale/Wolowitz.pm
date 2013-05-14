@@ -6,6 +6,8 @@ use warnings;
 use strict;
 use utf8;
 
+use Moo;
+
 use Carp;
 use JSON::Any;
 
@@ -38,7 +40,7 @@ Locale::Wolowitz - Dead simple localization for with JSON.
 	# in your app
 	use Locale::Wolowitz;
 
-	my $w = Locale::Wolowitz->new( './i18n' );
+	my $w = Locale::Wolowitz->new( path => './i18n' );
 
 	print $w->loc('Welcome!', 'es'); # prints 'Bienvenido!'
 
@@ -145,25 +147,21 @@ you want to give some of your strings an identifier. For example:
 		"he": "כל הזכויות שמורות, 2010 עידו פרלמוטר"
 	}
 
-=head1 CLASS METHODS
-
-=head2 new( $path / $filename )
-
-Creates a new instance of this module. Requires a path to a directory in
-which JSON localization files exist, or a path to a specific localization
-file. If you pass a directory, all JSON localization files will be loaded
-and merged as described above. If you pass one file, only that file will be
-loaded.
-
 =cut
 
-sub new {
-	my ($class, $path) = @_;
+has path => (
+    is => 'ro',
+);
 
-	return bless {
-		path => $path,
-		locales => $class->_load_locales($path)
-	}, $class;
+has locales => (
+    is       => 'lazy',
+    init_arg => undef,
+);
+
+sub _build_locales {
+    my ( $self ) = @_;
+
+    return Locale::Wolowitz->_load_locales($self->path);
 }
 
 =head1 OBJECT METHODS
@@ -182,7 +180,7 @@ sub loc {
 
 	return $msg unless $lang;
 
-	my $ret = $self->{locales}->{$msg} && $self->{locales}->{$msg}->{$lang} ? $self->{locales}->{$msg}->{$lang} : $msg;
+	my $ret = $self->locales->{$msg} && $self->locales->{$msg}->{$lang} ? $self->locales->{$msg}->{$lang} : $msg;
 
 	if (scalar @args) {
 		for (my $i = 1; $i <= scalar @args; $i++) {
