@@ -5,9 +5,12 @@ package Locale::Wolowitz;
 use warnings;
 use strict;
 use utf8;
+use feature "state";
 
 use Moo;
-use Types::Standard qw( Str HashRef );
+
+use Type::Params qw( compile );
+use Types::Standard qw( slurpy Object Str HashRef ArrayRef );
 
 use Carp;
 use JSON::Any;
@@ -179,15 +182,16 @@ passed to the method (C<@args>) are injected to the placeholders in the string
 =cut
 
 sub loc {
-	my ($self, $msg, $lang, @args) = @_;
+        state $check = compile( Object, Str, Str, slurpy ArrayRef );
+	my ($self, $msg, $lang, $args) = $check->(@_);
 
 	return $msg unless $lang;
 
 	my $ret = $self->locales->{$msg} && $self->locales->{$msg}->{$lang} ? $self->locales->{$msg}->{$lang} : $msg;
 
-	if (scalar @args) {
-		for (my $i = 1; $i <= scalar @args; $i++) {
-			$ret =~ s/%$i/$args[$i-1]/g;
+	if (scalar @{$args}) {
+		for (my $i = 1; $i <= scalar @{$args}; $i++) {
+			$ret =~ s/%$i/$args->[$i-1]/g;
 		}
 	}
 
