@@ -153,9 +153,16 @@ you want to give some of your strings an identifier. For example:
 
 =cut
 
+=attr path
+
+ro, Str. Specified the path of translations. It's required.
+
+=cut
+
 has path => (
-    is  => 'ro',
-    isa => Str,
+    is       => 'ro',
+    isa      => Str,
+    required => 1,
 );
 
 has locales => (
@@ -187,7 +194,9 @@ sub loc {
 
 	return $msg unless $lang;
 
-	my $ret = $self->locales->{$msg} && $self->locales->{$msg}->{$lang} ? $self->locales->{$msg}->{$lang} : $msg;
+	my $ret = $self->locales->{$msg} && $self->locales->{$msg}->{$lang}
+            ? $self->locales->{$msg}->{$lang}
+            : $msg;
 
 	if (scalar @{$args}) {
 		for (my $i = 1; $i <= scalar @{$args}; $i++) {
