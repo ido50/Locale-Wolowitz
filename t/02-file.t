@@ -6,7 +6,7 @@ use Test::More tests => 4;
 use Locale::Wolowitz;
 use utf8;
 
-my $w = Locale::Wolowitz->new('t/i18n/rev_en.json');
+my $w = Locale::Wolowitz->new( path => 't/i18n/rev_en.json' );
 ok($w, 'Got a proper Wolowitz object');
 
 is($w->loc('hey man', 'rev_en'), 'nam yeh', 'en -> rev_en [1]');
