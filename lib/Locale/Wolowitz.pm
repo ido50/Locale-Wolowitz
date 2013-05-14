@@ -7,6 +7,7 @@ use strict;
 use utf8;
 
 use Moo;
+use Types::Standard qw( Str HashRef );
 
 use Carp;
 use JSON::Any;
@@ -150,12 +151,14 @@ you want to give some of your strings an identifier. For example:
 =cut
 
 has path => (
-    is => 'ro',
+    is  => 'ro',
+    isa => Str,
 );
 
 has locales => (
     is       => 'lazy',
     init_arg => undef,
+    isa      => HashRef,
 );
 
 sub _build_locales {
