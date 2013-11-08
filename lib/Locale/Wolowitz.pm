@@ -180,6 +180,7 @@ passed to the method (C<@args>) are injected to the placeholders in the string
 sub loc {
 	my ($self, $msg, $lang, @args) = @_;
 
+	return unless $msg; # undef strings are passed back as-is
 	return $msg unless $lang;
 
 	my $ret = $self->{locales}->{$msg} && $self->{locales}->{$msg}->{$lang} ? $self->{locales}->{$msg}->{$lang} : $msg;
