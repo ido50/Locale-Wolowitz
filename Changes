@@ -1,6 +1,7 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- undef strings are returned as is from loc() (thanks isync)
 
 0.3       2012-11-22 21:08:09 Asia/Jerusalem
 	- Added the ability to load just on localization file

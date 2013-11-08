@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 17;
 use Locale::Wolowitz;
 use utf8;
 
@@ -36,5 +36,9 @@ is($w->loc('generic', 'rev_en'), 'eyb eyb', 'en -> rev_en [3]');
 is($w->loc('just english %1 and %2', 'en', 'me', 'you'), 'just english me and you', 'en -> en [4]');
 
 is($w->loc('just english %1 and %2', 'he', 'me', 'you'), 'just english me and you', 'en -> he [4]');
+
+is($w->loc('', 'en', 'asdf'), '', 'empty string returns empty string');
+
+is($w->loc(undef, 'en'), undef, 'undef string returns undef');
 
 done_testing();
