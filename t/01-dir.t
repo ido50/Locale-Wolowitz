@@ -6,7 +6,7 @@ use Test::More tests => 17;
 use Locale::Wolowitz;
 use utf8;
 
-my $w = Locale::Wolowitz->new('t/i18n');
+my $w = Locale::Wolowitz->new( path => 't/i18n' );
 ok($w, 'Got a proper Wolowitz object');
 
 is($w->loc('hey man', 'en'), 'hey man', 'en -> en [1]');
