@@ -1,6 +1,6 @@
 package Locale::Wolowitz;
 
-# ABSTRACT: Dead simple localization for with JSON.
+# ABSTRACT: Dead simple localization with JSON.
 
 use warnings;
 use strict;
@@ -16,7 +16,7 @@ $VERSION = eval $VERSION;
 
 =head1 NAME
 
-Locale::Wolowitz - Dead simple localization for with JSON.
+Locale::Wolowitz - Dead simple localization with JSON.
 
 =head1 SYNOPSIS
 

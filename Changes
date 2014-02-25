@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+0.4       2013-11-08 16:14:24 Asia/Jerusalem
 	- undef strings are returned as is from loc() (thanks isync)
 
 0.3       2012-11-22 21:08:09 Asia/Jerusalem
