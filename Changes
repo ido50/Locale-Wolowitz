@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+1.000000  2014-04-08 19:08:18+03:00 Asia/Jerusalem
 	- Added the ability to load localization data directly from a hash-ref, so data can
 	  come from other sources except files (think databases).
 	- The path paremeter to the new() constructor is now optional, as you can call the

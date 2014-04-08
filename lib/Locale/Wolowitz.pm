@@ -374,8 +374,8 @@ C<Locale::Wolowitz> B<depends> on the following CPAN modules:
 
 =back
 
-C<Locale::Wolowitz> recommends L<JSON> and/or L<JSON::XS>
-for actually being able to parse the JSON files.
+C<Locale::Wolowitz> recommends L<JSON::XS> for faster parsing of JSON files.
+If installed, C<JSON> will automatically load it in its place.
 
 =head1 INCOMPATIBILITIES WITH OTHER MODULES
 
