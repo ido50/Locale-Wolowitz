@@ -1,6 +1,12 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- Added the ability to load localization data directly from a hash-ref, so data can
+	  come from other sources except files (think databases).
+	- The path paremeter to the new() constructor is now optional, as you can call the
+	  (new) methods load_path() and load_structure() manually and as much as you want,
+	  merging data from call to call. Backwards compatibility is kept.
+	- Now using JSON instead of JSON::Any.
 
 0.4       2013-11-08 16:14:24 Asia/Jerusalem
 	- undef strings are returned as is from loc() (thanks isync)

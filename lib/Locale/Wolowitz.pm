@@ -7,9 +7,9 @@ use strict;
 use utf8;
 
 use Carp;
-use JSON::Any;
+use JSON;
 
-our $VERSION = "0.4";
+our $VERSION = "1.000000";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -43,6 +43,16 @@ Locale::Wolowitz - Dead simple localization with JSON.
 	print $w->loc('Welcome!', 'es'); # prints 'Bienvenido!'
 
 	print $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he')); # prints "אני משתמש בלינוקס"
+
+	# you can also directly load data (useful if data is not in files, but say in database)
+	$w->load_structure({
+		hello => {
+			he => 'שלום',
+			fr => 'bonjour'
+		}
+	});
+
+	print $w->loc('hello', 'he'); # prints "שלום"
 
 =head1 DESCRIPTION
 
@@ -145,30 +155,152 @@ you want to give some of your strings an identifier. For example:
 		"he": "כל הזכויות שמורות, 2010 עידו פרלמוטר"
 	}
 
-=head1 CLASS METHODS
+=head1 CONSTRUCTOR
 
-=head2 new( $path / $filename )
+=head2 new( [ $path / $filename ] )
 
-Creates a new instance of this module. Requires a path to a directory in
+Creates a new instance of this module. A path to a directory in
 which JSON localization files exist, or a path to a specific localization
-file. If you pass a directory, all JSON localization files will be loaded
-and merged as described above. If you pass one file, only that file will be
-loaded.
+file, I<may> be supplied. If you pass a directory, all JSON localization files
+in it will be loaded and merged as described above. If you pass one file,
+only that file will be loaded.
 
 =cut
 
 sub new {
 	my ($class, $path) = @_;
 
-	return bless {
-		path => $path,
-		locales => $class->_load_locales($path)
-	}, $class;
+	my $self = bless {}, $class;
+
+	$self->load_path($path)
+		if $path;
+
+	return $self;
 }
 
 =head1 OBJECT METHODS
 
-=head2 loc( $msg, $lang, [@args] )
+=head2 load_path( $path / $filename )
+
+Receives a path to a directory in which JSON localization files exist, or a
+path to a specific localization file, and loads (and merges) the localization
+data from the file(s). If localization data was already loaded previously,
+the structure will be merged, with the new data taking precedence.
+
+You can call this method and L<load_structure()|/"load_structure( \%structure, [ $lang ] )">
+as much as you want, the data from each call will be merged with existing data.
+
+=cut
+
+sub load_path {
+	my ($self, $path) = @_;
+
+	croak "You must provide a path to localization directory."
+		unless $path;
+
+	$self->{locales} ||= {};
+
+	my @files;
+
+	if (-d $path) {
+		# open the locales directory
+		opendir(PATH, $path)
+			|| croak "Can't open localization directory: $!";
+	
+		# get all JSON files
+		@files = grep {/\.json$/} readdir PATH;
+
+		closedir PATH
+			|| carp "Can't close localization directory: $!";
+	} elsif (-e $path) {
+		my ($file) = ($path =~ m{/([^/]+)$})[0];
+		$path = $`;
+		@files = ($file);
+	} else {
+		croak "Path must be to a directory or a JSON file.";
+	}
+
+	# load the files
+	foreach (@files) {
+		# read the file's contents and parse it as json
+		open(FILE, "$path/$_")
+			|| croak "Can't open localization file $_: $!";
+		undef $/;
+		my $json = <FILE>;
+		close FILE
+			|| carp "Can't close localization file $_: $!";
+
+		my $data = decode_json($json);
+
+		# is this a one-lang file or a collection?
+		if (m/\.coll\.json$/) {
+			# this is a collection of languages
+			foreach my $str (keys %$data) {
+				foreach my $lang (keys %{$data->{$str}}) {
+					$self->{locales}->{$str}->{$lang} = $data->{$str}->{$lang};
+				}
+			}
+		} elsif (m/\.json$/) { # has to be true
+			my $lang = $`;
+			foreach my $str (keys %$data) {
+				$self->{locales}->{$str}->{$lang} = $data->{$str};
+			}
+		}
+	}
+
+	return 1;
+}
+
+=head2 load_structure( \%structure, [ $lang ] )
+
+Receives a hash-ref of localization data similar to that in the JSON files
+and loads it into the object (possibly merging with existing data, if any).
+If C<$lang> is supplied, a one-to-one structure will be assumed, like so:
+
+	load_structure(
+		{ "hello" => "שלום", "world" => "עולם" },
+		'he'
+	)
+
+Or, if C<$lang> is not provided, the structure must be the multiple language
+structure, like so:
+
+	load_structure({
+		"hello" => {
+			"he" => "שלום",
+			"fr" => "bonjour"
+		},
+		"world" => {
+			"he" => "עולם",
+			"fr" => "monde",
+			"it" => "mondo"
+		}
+	})
+
+You can call this method and L<load_path()|/"load_path( $path / $filename )">
+as much as you want, the data from each call will be merged with existing data.
+
+=cut
+
+sub load_structure {
+	my ($self, $struct) = @_;
+
+	croak "The structure to load must be a hash-ref"
+		unless $struct && ref $struct eq 'HASH';
+
+	$self->{locales} ||= {};
+
+	foreach (keys %$struct) {
+		$self->{locales}->{$_} ||= {};
+		foreach my $lang (keys %{$struct->{$_}}) {
+			$self->{locales}->{$_}->{$lang} = $struct->{$_}->{$lang};
+		}
+	}
+
+	return 1;
+}
+
+=head2 loc( $msg, $lang, [ @args ] )
 
 Returns the string C<$msg>, translated to the requested language (if such
 a translation exists, otherwise no traslation occurs). Any other parameters
@@ -192,74 +324,6 @@ sub loc {
 	}
 
 	return $ret;
-}
-
-=head1 INTERNAL METHODS
-
-=head2 _load_locales( $path )
-
-Loads all locale JSON files in the directory C<$path> and returns them
-as a hash-ref.
-
-=cut
-
-sub _load_locales {
-	my ($class, $path) = @_;
-
-	croak "You must provide a path to localization directory."
-		unless $path;
-
-	my @files;
-
-	if (-d $path) {
-		# open the locales directory
-		opendir(PATH, $path)
-			|| croak "Can't open localization directory: $!";
-	
-		# get all JSON files
-		@files = grep {/\.json$/} readdir PATH;
-
-		closedir PATH
-			|| carp "Can't close localization directory: $!";
-	} elsif (-e $path) {
-		my ($file) = ($path =~ m{/([^/]+)$})[0];
-		$path = $`;
-		@files = ($file);
-	} else {
-		croak "Path must be to a directory or a JSON file.";
-	}
-
-	my $locales = {};
-
-	# load the files
-	foreach (@files) {
-		# read the file's contents and parse it as json
-		open(FILE, "$path/$_")
-			|| croak "Can't open localization file $_: $!";
-		undef $/;
-		my $json = <FILE>;
-		close FILE
-			|| carp "Can't close localization file $_: $!";
-		
-		my $data = JSON::Any->from_json($json);
-		
-		# is this a one-lang file or a collection?
-		if (m/\.coll\.json$/) {
-			# this is a collection of languages
-			foreach my $str (keys %$data) {
-				foreach my $lang (keys %{$data->{$str}}) {
-					$locales->{$str}->{$lang} = $data->{$str}->{$lang};
-				}
-			}
-		} elsif (m/\.json$/) { # has to be true
-			my $lang = $`;
-			foreach my $str (keys %$data) {
-				$locales->{$str}->{$lang} = $data->{$str};
-			}
-		}
-	}
-
-	return $locales;
 }
 
 =head1 DIAGNOSTICS
@@ -306,7 +370,7 @@ C<Locale::Wolowitz> B<depends> on the following CPAN modules:
 
 =item * L<Carp>
 
-=item * L<JSON::Any>
+=item * L<JSON>
 
 =back
 
@@ -331,7 +395,7 @@ Ido Perlmuter <ido@ido50.net>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2010-2012, Ido Perlmuter C<< ido@ido50.net >>.
+Copyright (c) 2010-2014, Ido Perlmuter C<< ido@ido50.net >>.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself, either version
