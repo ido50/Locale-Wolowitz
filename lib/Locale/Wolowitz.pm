@@ -9,7 +9,7 @@ use utf8;
 use Carp;
 use JSON;
 
-our $VERSION = "1.000000";
+our $VERSION = "1.000001";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -225,7 +225,7 @@ sub load_path {
 		# read the file's contents and parse it as json
 		open(FILE, "$path/$_")
 			|| croak "Can't open localization file $_: $!";
-		undef $/;
+		local $/;
 		my $json = <FILE>;
 		close FILE
 			|| carp "Can't close localization file $_: $!";
