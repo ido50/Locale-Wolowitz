@@ -9,7 +9,7 @@ use utf8;
 use Carp;
 use JSON;
 
-our $VERSION = "1.000001";
+our $VERSION = "1.000002";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -226,11 +226,12 @@ sub load_path {
 		open(FILE, "$path/$_")
 			|| croak "Can't open localization file $_: $!";
 		local $/;
-		my $json = <FILE>;
+		my $content = <FILE>;
 		close FILE
 			|| carp "Can't close localization file $_: $!";
 
-		my $data = decode_json($json);
+		my $json = JSON->new->utf8->relaxed;
+		my $data = $json->decode($content);
 
 		# is this a one-lang file or a collection?
 		if (m/\.coll\.json$/) {
