@@ -7,9 +7,9 @@ use strict;
 use utf8;
 
 use Carp;
-use JSON;
+use JSON::MaybeXS qw/JSON/;
 
-our $VERSION = "1.000001";
+our $VERSION = "1.001000";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -172,6 +172,8 @@ sub new {
 
 	my $self = bless {}, $class;
 
+	$self->{json} = JSON->new->utf8->relaxed;
+
 	$self->load_path($path)
 		if $path;
 
@@ -230,7 +232,7 @@ sub load_path {
 		close FILE
 			|| carp "Can't close localization file $_: $!";
 
-		my $data = decode_json($json);
+		my $data = $self->{json}->decode($json);
 
 		# is this a one-lang file or a collection?
 		if (m/\.coll\.json$/) {
@@ -370,12 +372,12 @@ C<Locale::Wolowitz> B<depends> on the following CPAN modules:
 
 =item * L<Carp>
 
-=item * L<JSON>
+=item * L<JSON::MaybeXS>
 
 =back
 
-C<Locale::Wolowitz> recommends L<JSON::XS> for faster parsing of JSON files.
-If installed, C<JSON> will automatically load it in its place.
+C<Locale::Wolowitz> recommends L<Cpanel::JSON::XS> or L<JSON::XS> for faster
+parsing of JSON files.
 
 =head1 INCOMPATIBILITIES WITH OTHER MODULES
 
@@ -395,7 +397,7 @@ Ido Perlmuter <ido@ido50.net>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2010-2014, Ido Perlmuter C<< ido@ido50.net >>.
+Copyright (c) 2010-2015, Ido Perlmuter C<< ido@ido50.net >>.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself, either version

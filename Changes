@@ -1,6 +1,11 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- now using JSON::MaybeXS instead of JSON
+	- relaxed mode is now enabled on the JSON object, for more information read the docs
+	  for Cpanel::JSON::XS, JSON::XS or JSON::PP.
+
+1.000001  2014-04-27 21:28:13+03:00 Asia/Jerusalem
 	- $/ was undefined globally when reading JSON files, potentially modifying behavior
 	  of other code in an application. Modification now localized.
 
