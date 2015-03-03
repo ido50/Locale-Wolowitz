@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+1.001000  2015-03-03 19:28:33+02:00 Asia/Jerusalem
 	- now using JSON::MaybeXS instead of JSON
 	- relaxed mode is now enabled on the JSON object, for more information read the docs
 	  for Cpanel::JSON::XS, JSON::XS or JSON::PP.
