@@ -191,7 +191,7 @@ OBJECT METHODS
     You can call this method and load_path() as much as you want, the data
     from each call will be merged with existing data.
 
-  loc( $msg, $lang, [@args] )
+  loc( $msg, $lang, [ @args ] )
     Returns the string $msg, translated to the requested language (if such a
     translation exists, otherwise no traslation occurs). Any other
     parameters passed to the method (@args) are injected to the placeholders
@@ -235,10 +235,10 @@ DEPENDENCIES
 
     *   Carp
 
-    *   JSON::Any
+    *   JSON::MaybeXS
 
-    "Locale::Wolowitz" recommends JSON and/or JSON::XS for actually being
-    able to parse the JSON files.
+    "Locale::Wolowitz" recommends Cpanel::JSON::XS or JSON::XS for faster
+    parsing of JSON files.
 
 INCOMPATIBILITIES WITH OTHER MODULES
     None reported.
@@ -254,7 +254,7 @@ AUTHOR
     Ido Perlmuter <ido@ido50.net>
 
 LICENSE AND COPYRIGHT
-    Copyright (c) 2010-2014, Ido Perlmuter "ido@ido50.net".
+    Copyright (c) 2010-2015, Ido Perlmuter "ido@ido50.net".
 
     This module is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself, either version 5.8.1 or any later
