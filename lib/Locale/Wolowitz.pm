@@ -210,7 +210,7 @@ sub load_path {
 			|| croak "Can't open localization directory: $!";
 	
 		# get all JSON files
-		@files = grep {/\.json$/} readdir PATH;
+		@files = grep {/^[^.].*\.json$/} readdir PATH;
 
 		closedir PATH
 			|| carp "Can't close localization directory: $!";
