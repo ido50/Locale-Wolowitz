@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+1.002000  2015-03-30 19:18:26+03:00 Asia/Jerusalem
 	- Locale::Wolowitz will not load dotfiles in the localization directory (thanks Bas Bloemsaat)
 
 1.001000  2015-03-03 19:28:33+02:00 Asia/Jerusalem
