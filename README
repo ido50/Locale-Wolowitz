@@ -151,6 +151,9 @@ CONSTRUCTOR
     files in it will be loaded and merged as described above. If you pass
     one file, only that file will be loaded.
 
+    Note that "Locale::Wolowitz" will ignore dotfiles in the provided path
+    (e.g. hidden files, backups files, etc.).
+
 OBJECT METHODS
   load_path( $path / $filename )
     Receives a path to a directory in which JSON localization files exist,

@@ -1,6 +1,7 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- Locale::Wolowitz will not load dotfiles in the localization directory (thanks Bas Bloemsaat)
 
 1.001000  2015-03-03 19:28:33+02:00 Asia/Jerusalem
 	- now using JSON::MaybeXS instead of JSON

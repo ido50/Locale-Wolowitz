@@ -9,7 +9,7 @@ use utf8;
 use Carp;
 use JSON::MaybeXS qw/JSON/;
 
-our $VERSION = "1.001000";
+our $VERSION = "1.002000";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -164,6 +164,9 @@ which JSON localization files exist, or a path to a specific localization
 file, I<may> be supplied. If you pass a directory, all JSON localization files
 in it will be loaded and merged as described above. If you pass one file,
 only that file will be loaded.
+
+Note that C<Locale::Wolowitz> will ignore dotfiles in the provided path (e.g.
+hidden files, backups files, etc.).
 
 =cut
 
