@@ -9,7 +9,7 @@ use utf8;
 use Carp;
 use JSON::MaybeXS qw/JSON/;
 
-our $VERSION = "1.002000";
+our $VERSION = "1.003000";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
@@ -157,7 +157,7 @@ you want to give some of your strings an identifier. For example:
 
 =head1 CONSTRUCTOR
 
-=head2 new( [ $path / $filename ] )
+=head2 new( [ $path / $filename, \%options ] )
 
 Creates a new instance of this module. A path to a directory in
 which JSON localization files exist, or a path to a specific localization
@@ -168,14 +168,27 @@ only that file will be loaded.
 Note that C<Locale::Wolowitz> will ignore dotfiles in the provided path (e.g.
 hidden files, backups files, etc.).
 
+A hash-ref of options can also be provided. The only option currently supported
+is C<utf8>, which is on by default. If on, all JSON files are assumed to be in
+UTF-8 character set and will be automatically decoded. Provide a false value
+if your files are not UTF-8 encoded, for example:
+
+	Locale::Wolowitz->new( '/path/to/files', { utf8 => 0 } );
+
 =cut
 
 sub new {
-	my ($class, $path) = @_;
+	my ($class, $path, $options) = @_;
+
+	$options ||= {};
+	$options->{utf8} = 1
+		unless exists $options->{utf8};
 
 	my $self = bless {}, $class;
 
-	$self->{json} = JSON->new->utf8->relaxed;
+	$self->{json} = JSON->new->relaxed;
+	$self->{json}->utf8
+		if $options->{utf8};
 
 	$self->load_path($path)
 		if $path;

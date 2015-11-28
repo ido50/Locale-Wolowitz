@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+	- Added an options argument to the constructor with the ability to turn off
+	  automatic UTF-8 decoding of JSON localization files.
 
 1.002000  2015-03-30 19:18:26+03:00 Asia/Jerusalem
 	- Locale::Wolowitz will not load dotfiles in the localization directory (thanks Bas Bloemsaat)
