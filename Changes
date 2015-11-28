@@ -1,6 +1,8 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+
+1.003000  2015-11-28 17:47:11+02:00 Asia/Jerusalem
 	- Added an options argument to the constructor with the ability to turn off
 	  automatic UTF-8 decoding of JSON localization files.
 
