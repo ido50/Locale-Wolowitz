@@ -325,6 +325,16 @@ a translation exists, otherwise no traslation occurs). Any other parameters
 passed to the method (C<@args>) are injected to the placeholders in the string
 (if present).
 
+If an argument is an array ref, it'll be replaced with
+a recursive call to C<loc> with its elements, with the C<$lang>
+argument automatically added.  In other
+words, the following two statements are equivalent:
+
+    print $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he'));
+    # same result as
+    print $w->loc("I'm using %1", 'he', [ 'Linux' ]);
+
+
 =cut
 
 sub loc {
@@ -332,6 +342,14 @@ sub loc {
 
 	return unless defined $msg; # undef strings are passed back as-is
 	return $msg unless $lang;
+
+    @args = map {
+        ref $_ ne 'ARRAY' ?  $_ : do {
+            my @args = @$_;
+            splice @args, 1, 0, $lang;
+            $self->loc( @args );
+        }
+    } @args;
 
 	my $ret = $self->{locales}->{$msg} && $self->{locales}->{$msg}->{$lang} ? $self->{locales}->{$msg}->{$lang} : $msg;
 
