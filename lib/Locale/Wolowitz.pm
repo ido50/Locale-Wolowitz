@@ -335,11 +335,7 @@ sub loc {
 
 	my $ret = $self->{locales}->{$msg} && $self->{locales}->{$msg}->{$lang} ? $self->{locales}->{$msg}->{$lang} : $msg;
 
-	if (scalar @args) {
-		for (my $i = 1; $i <= scalar @args; $i++) {
-			$ret =~ s/%$i/$args[$i-1]/g;
-		}
-	}
+    $ret =~ s/%(\d+)/$args[$1-1]/g;
 
 	return $ret;
 }
