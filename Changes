@@ -1,6 +1,16 @@
 Revision history for Locale::Wolowitz
 
 {{$NEXT}}
+    Thanks to Yanick Champoux for the following changes:
+    - Added the loc_for() currying method to generate a localization function that
+      translates to a specific language without having to specify it on every call.
+    - Added the ability to translate arguments to placeholders without having to
+      call loc() on the arguments as well. For example, instead of having to write
+      $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he')), you can now simply
+      write $w->loc("I'm using %1", 'he', ['Linux']), and "Linux" will be translated
+      to Hebrew as well before replacing the %1 placeholder.
+    - Fixed a bug with definitions including 10 or more placeholders not being
+      correctly filled out.
 
 1.003000  2015-11-28 17:47:11+02:00 Asia/Jerusalem
 	- Added an options argument to the constructor with the ability to turn off

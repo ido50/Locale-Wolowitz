@@ -207,6 +207,27 @@ OBJECT METHODS
     parameters passed to the method (@args) are injected to the placeholders
     in the string (if present).
 
+    If an argument is an array ref, it'll be replaced with a recursive call
+    to "loc" with its elements, with the $lang argument automatically added.
+    In other words, the following two statements are equivalent:
+
+        print $w->loc("I'm using %1", 'he', $w->loc('Linux', 'he'));
+        # same result as
+        print $w->loc("I'm using %1", 'he', [ 'Linux' ]);
+
+  loc_for( $lang )
+    Returns a function ref that is like "loc", but with the $lang curried
+    away.
+
+        use Locale::Wolowitz;
+
+        my $w = Locale::Wolowitz->new( './i18n' );
+
+        my $french_loc  = $w->loc_for('fr');
+        my $german_loc  = $w->loc_for('de');
+
+        print $french_loc->('Welcome!'); # equivalent to $w->loc( 'Welcome!', 'fr' )
+
 DIAGNOSTICS
     The following exceptions are thrown by this module:
 
@@ -264,7 +285,7 @@ AUTHOR
     Ido Perlmuter <ido@ido50.net>
 
 LICENSE AND COPYRIGHT
-    Copyright (c) 2010-2015, Ido Perlmuter "ido@ido50.net".
+    Copyright (c) 2010-2017, Ido Perlmuter "ido@ido50.net".
 
     This module is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself, either version 5.8.1 or any later

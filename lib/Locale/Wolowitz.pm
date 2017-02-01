@@ -416,7 +416,7 @@ will include both the name of the file, and the actual reason for the failure.
 =back
 
 =head1 CONFIGURATION AND ENVIRONMENT
-  
+
 C<Locale::Wolowitz> requires no configuration files or environment variables.
 
 =head1 DEPENDENCIES
@@ -452,11 +452,11 @@ Ido Perlmuter <ido@ido50.net>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2010-2015, Ido Perlmuter C<< ido@ido50.net >>.
+Copyright (c) 2010-2017, Ido Perlmuter C<< ido@ido50.net >>.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself, either version
-5.8.1 or any later version. See L<perlartistic|perlartistic> 
+5.8.1 or any later version. See L<perlartistic|perlartistic>
 and L<perlgpl|perlgpl>.
 
 The full text of the license can be found in the
