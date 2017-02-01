@@ -340,6 +340,31 @@ sub loc {
 	return $ret;
 }
 
+=head2 loc_for( $lang )
+
+Returns a function ref that is like C<loc>, but with the C<$lang> curried away.
+
+    use Locale::Wolowitz;
+
+    my $w = Locale::Wolowitz->new( './i18n' );
+
+    my $french_loc  = $w->loc_for('fr');
+    my $german_loc  = $w->loc_for('de');
+
+    print $french_loc->('Welcome!'); # equivalent to $w->loc( 'Welcome!', 'fr' )
+
+=cut
+
+sub loc_for {
+    my( $self, $lang ) = @_;
+
+    return sub {
+        my $text = shift;
+        $self->loc( $text, $lang, @_ );
+    };
+}
+
+
 =head1 DIAGNOSTICS
 
 The following exceptions are thrown by this module:
