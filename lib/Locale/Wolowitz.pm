@@ -9,7 +9,7 @@ use utf8;
 use Carp;
 use JSON::MaybeXS qw/JSON/;
 
-our $VERSION = "1.004000";
+our $VERSION = "1.004001";
 $VERSION = eval $VERSION;
 
 =encoding utf-8
