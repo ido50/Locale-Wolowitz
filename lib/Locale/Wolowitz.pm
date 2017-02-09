@@ -343,17 +343,17 @@ sub loc {
 	return unless defined $msg; # undef strings are passed back as-is
 	return $msg unless $lang;
 
-    @args = map {
-        ref $_ ne 'ARRAY' ?  $_ : do {
-            my @args = @$_;
-            splice @args, 1, 0, $lang;
-            $self->loc( @args );
-        }
-    } @args;
+	@args = map {
+		ref $_ ne 'ARRAY' ?  $_ : do {
+			my @args = @$_;
+			splice @args, 1, 0, $lang;
+			$self->loc( @args );
+		}
+	} @args;
 
 	my $ret = $self->{locales}->{$msg} && $self->{locales}->{$msg}->{$lang} ? $self->{locales}->{$msg}->{$lang} : $msg;
 
-    $ret =~ s/%(\d+)/$args[$1-1]/g;
+	$ret =~ s/%(\d+)/$args[$1-1]/g;
 
 	return $ret;
 }
@@ -374,12 +374,12 @@ Returns a function ref that is like C<loc>, but with the C<$lang> curried away.
 =cut
 
 sub loc_for {
-    my( $self, $lang ) = @_;
+	my( $self, $lang ) = @_;
 
-    return sub {
-        my $text = shift;
-        $self->loc( $text, $lang, @_ );
-    };
+	return sub {
+		my $text = shift;
+		$self->loc( $text, $lang, @_ );
+	};
 }
 
 
