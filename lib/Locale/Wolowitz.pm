@@ -222,13 +222,13 @@ sub load_path {
 
 	if (-d $path) {
 		# open the locales directory
-		opendir(PATH, $path)
+		opendir(my $dh, $path)
 			|| croak "Can't open localization directory: $!";
 	
 		# get all JSON files
-		@files = grep {/^[^.].*\.json$/} readdir PATH;
+		@files = grep {/^[^.].*\.json$/} readdir $dh;
 
-		closedir PATH
+		closedir $dh
 			|| carp "Can't close localization directory: $!";
 	} elsif (-e $path) {
 		my ($file) = ($path =~ m{/([^/]+)$})[0];
@@ -241,11 +241,11 @@ sub load_path {
 	# load the files
 	foreach (@files) {
 		# read the file's contents and parse it as json
-		open(FILE, "$path/$_")
+		open(my $fh, '<', "$path/$_")
 			|| croak "Can't open localization file $_: $!";
 		local $/;
-		my $json = <FILE>;
-		close FILE
+		my $json = <$fh>;
+		close $fh
 			|| carp "Can't close localization file $_: $!";
 
 		my $data = $self->{json}->decode($json);
